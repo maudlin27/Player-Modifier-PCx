@@ -5,8 +5,13 @@
 ---
 
 bModifiersPresent = false --True if want to consider applying
+tbModifierByIndex = {} --true if have a non-1.0 modifier
 tiBuildRateModByIndex = {}
 tiResourceModByIndex = {}
+refCategoryResourceUnit = categories.MASSPRODUCTION + categories.MASSFABRICATION + categories.ENERGYPRODUCTION --i.e. includes SACU
+refCategoryProductionUnit = categories.ENGINEER + categories.FACTORY + categories.STRUCTURE * (categories.TECH2 + categories.TECH1) + categories.REPAIR + categories.SILO --i.e. includes buildings that can upgrade; done so if fixing a modifier it can affect build rate
+
+local FAFBuffs = import('/lua/sim/Buff.lua')
 
 function IsTableEmpty(tTable, bEmptyIfNonTableWithValue)
     --Returns true if a table is empty
@@ -32,21 +37,179 @@ function IsTableEmpty(tTable, bEmptyIfNonTableWithValue)
 end
 
 
-function OnCreate(oUnit, bIgnoreMapSetup)
+function OnCreate(oUnit)
     --LOG('OnCreate pre M28InGamecheck, M28Utilities.bM28AIInGame='..tostring(M28Utilities.bM28AIInGame))
     if bModifiersPresent then
         --Is this a valid unit?
         if oUnit.UnitId and not(oUnit.Dead) and oUnit.GetAIBrain then
-            --Have we already run this?
-            --Do we have a build rate or resource modifier for this unit?
-            local oBP = oUnit:GetBlueprint()
-            if oBP.Economy.BuildRate or oBP.Economy.ProductionPerSecondMass or oBP.Economy.ProductionPerSecondEnergy then
-                --Have we run this before?
-                if not(oUnit['PCxCr']) then
-                    oUnit['PCxCr'] = true
-
+            --Is this for a brain that has a modifier?
+            local iIndex = oUnit:GetAIBrain()
+            if iIndex.GetArmyIndex then
+                iIndex = iIndex:GetArmyIndex()
+                if tbModifierByIndex[iIndex] then
+                    --Have we already run this?
+                    --Do we have a build rate or resource modifier for this unit?
+                    local oBP = oUnit:GetBlueprint()
+                    if oBP.Economy.BuildRate or oBP.Economy.ProductionPerSecondMass or oBP.Economy.ProductionPerSecondEnergy then
+                        --Have we run this before?
+                        if not(oUnit['PCxCr']) then
+                            oUnit['PCxCr'] = true
+                            ApplyUnitCheatModifiers(oUnit, iIndex, tiBuildRateModByIndex[iIndex],  tiResourceModByIndex[iIndex])
+                        end
+                    end
                 end
             end
         end
     end
+end
+
+function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifier)
+    local bDebugMessages = false
+    local sFunctionRef = 'FixUnitResourceCheatModifiers'
+
+    WaitTicks(1)
+    local oBP = oUnit:GetBlueprint()
+    if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..GetUnitLifetimeCount(oUnit)..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate) end
+    if iResourceModifier then
+        local iBaseMassPerSec = (oBP.Economy.ProductionPerSecondMass or 0)
+        local iBaseEnergyPerSec = (oBP.Economy.ProductionPerSecondEnergy or 0)
+        local iUpgradeMassPerSec = 0
+        local iUpgradeEnergyPerSec = 0
+
+        local tPossibleUpgrades = oBP.Enhancements
+        if IsTableEmpty(tPossibleUpgrades) == false and oUnit.HasEnhancement then
+            if bDebugMessages == true then LOG(sFunctionRef..': tPossibleUpgrades size='..table.getn(tPossibleUpgrades)) end
+            if tPossibleUpgrades then
+                for sCurUpgrade, tUpgrade in tPossibleUpgrades do
+                    if oUnit:HasEnhancement(sCurUpgrade) then
+                        iUpgradeMassPerSec = iUpgradeMassPerSec + (tUpgrade.ProductionPerSecondMass or 0)
+                        iUpgradeEnergyPerSec = iUpgradeEnergyPerSec + (tUpgrade.ProductionPerSecondEnergy or 0)
+                    end
+                end
+            end
+        end
+        if iUpgradeMassPerSec > 0 or iUpgradeEnergyPerSec > 0 or iBaseMassPerSec > 0 or iBaseEnergyPerSec > 0 then
+            if not(Buffs['PCxIncome'..iIndex]) then
+                SetBuildAndResourceCheatModifiers(oUnit:GetAIBrain(), iBuildModifier, iResourceModifier, true, false)
+            end
+            --Check if have a buff
+            if bDebugMessages == true then
+                LOG(sFunctionRef..': unit.Buffs.BuffTable='..reprs(oUnit.Buffs.BuffTable)..'; Buffs[\'PCxIncome\'..iIndex].Affects.EnergyProduction.Mult='..(Buffs['PCxIncome'..iIndex].Affects.EnergyProduction.Mult or 'nil'))
+            end
+            if IsTableEmpty(oUnit.Buffs.BuffTable) == false then
+                for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
+                    for sBuffRef, tBuffValues in tBuffInfo do
+                        if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
+                        if sBuffRef == 'PCxIncome' or sBuffRef == 'PCxIncome'..iIndex then
+                            if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
+                            FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
+                        end
+                    end
+                end
+            end
+            FAFBuffs.ApplyBuff(oUnit, 'PCxIncome'..iIndex)
+            oUnit:SetProductionPerSecondMass((iBaseMassPerSec + iUpgradeMassPerSec) * iResourceModifier)
+            oUnit:SetProductionPerSecondEnergy((iBaseEnergyPerSec + iUpgradeEnergyPerSec) * iResourceModifier)
+            if bDebugMessages == true then LOG(sFunctionRef..': Finished setting build and resource cheat modifiers for unit '..oUnit.UnitId..' owned by player '..oUnit:GetAIBrain().Nickname..', iBaseMassPerSec='..iBaseMassPerSec..'; iUpgradeMassPerSec='..iUpgradeMassPerSec..'; iResourceModifier='..iResourceModifier..'; Brain='..oUnit:GetAIBrain().Nickname..'; Buffs[CheatIncome].Affects.MassProduction.Mult='..(Buffs['PCxIncome'..iIndex].Affects.MassProduction.Mult or 'nil')) end
+        end
+    end
+    if iBuildModifier then
+        if oBP.Economy.BuildRate then
+            if not(Buffs['PCxBuildRate'..iIndex]) then
+                SetBuildAndResourceCheatModifiers(oUnit:GetAIBrain(), iBuildModifier, iResourceModifier, true, false)
+                if bDebugMessages == true then
+                    LOG(sFunctionRef..': unit.Buffs.BuffTable='..reprs(oUnit.Buffs.BuffTable)..'; Buffs[\'PCxBuildRate\'..iIndex].Affects.BuildRate.Mult='..(Buffs['PCxBuildRate'..iIndex].Affects.BuildRate.Mult or 'nil'))
+                end
+            end
+            if IsTableEmpty(oUnit.Buffs.BuffTable) == false then
+                for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
+                    for sBuffRef, tBuffValues in tBuffInfo do
+                        if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
+                        if sBuffRef == 'PCxBuildRate' or sBuffRef == 'PCxBuildRate'..iIndex then
+                            if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
+                            FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
+                        end
+                    end
+                end
+            end
+            FAFBuffs.ApplyBuff(oUnit, 'PCxBuildRate'..iIndex)
+            if bDebugMessages == true then LOG(sFunctionRef..': Applied build rate buff of '..(Buffs['BuildRate'..iIndex].Affects.BuildRate.Mult or 'nil')..' to the unit') end
+        end
+    end
+end
+
+function SetBuildAndResourceCheatModifiers(aiBrain, iBuildModifier, iResourceModifier, bDontApplyToUnits, bUpdateCheatValue)
+    local bDebugMessages = false if M28Profiler.bGlobalDebugOverride == true then   bDebugMessages = true end
+    local sFunctionRef = 'SetBuildAndResourceCheatModifiers'
+    --Note - see also ApplyUnitCheatModifiers for the function applying the buffs to units
+
+    if bDebugMessages == true then LOG(sFunctionRef..': Start of code for aiBrain='..aiBrain.Nickname..'; iBuildModifier='..iBuildModifier..'; iResourceModifier='..iResourceModifier) end
+    --Force build modifier and resource modifier to be numeric
+    iBuildModifier = tonumber(iBuildModifier)
+    iResourceModifier = tonumber(iResourceModifier)
+    local iIndex = aiBrain:GetArmyIndex()
+
+    local sCheatBuildRate = 'PCxBuildRate'..iIndex
+    local sCheatIncome = 'PCxIncome'..iIndex
+    if not Buffs[sCheatBuildRate] then
+        BuffBlueprint {
+            Name = sCheatBuildRate,
+            DisplayName = sCheatBuildRate,
+            BuffType = 'BUILDRATECHEAT',
+            Stacks = 'ALWAYS',
+            Duration = -1,
+            Affects = {
+                BuildRate = {
+                    --BuffCheckFunction = AdjBuffFuncs.BuildRateBuffCheck,
+                    Add = 0,
+                    Mult = 1,
+                },
+            },
+        }
+    end
+    if not Buffs[sCheatIncome] then
+        BuffBlueprint {
+            Name = sCheatIncome,
+            DisplayName = sCheatBuildRate,
+            BuffType = 'INCOMECHEAT',
+            Stacks = 'ALWAYS',
+            Duration = -1,
+            Affects = {
+                EnergyProduction = {
+                    --BuffCheckFunction = AdjBuffFuncs.EnergyProductionBuffCheck,
+                    Add = 0,
+                    Mult = 1,
+                },
+                MassProduction = {
+                    --BuffCheckFunction = AdjBuffFuncs.MassProductionBuffCheck,
+                    Add = 0,
+                    Mult = 1,
+                }
+            },
+        }
+    end
+    if bUpdateCheatValue then
+        tiBuildRateModByIndex[iIndex] = iBuildModifier
+        tiResourceModByIndex[iIndex] = iResourceModifier
+    end
+    --[[if bLoudModActive or bQuietModActive then
+        Buffs[sCheatBuildRate].EntityCategory = 'ALLUNITS'
+        Buffs[sCheatIncome].EntityCategory = 'ALLUNITS'
+        Buffs[sCheatBuildRate].ParsedEntityCategory = categories.ALLUNITS
+        Buffs[sCheatIncome].ParsedEntityCategory = categories.ALLUNITS
+    end--]]
+    Buffs['PCxBuildRate'..iIndex].Affects.BuildRate.Mult = iBuildModifier
+    Buffs['PCxIncome'..iIndex].Affects.EnergyProduction.Mult = iResourceModifier
+    Buffs['PCxIncome'..iIndex].Affects.MassProduction.Mult = iResourceModifier
+    if not(bDontApplyToUnits) then
+        --Want both resource producing units, and units that can be upgraded
+        local tExistingUnits = aiBrain:GetListOfUnits(refCategoryResourceUnit + refCategoryProductionUnit, false, false)
+        if bDebugMessages == true then LOG(sFunctionRef..': Is table of existing units empty='..tostring(IsTableEmpty(tExistingUnits))..'; Brain='..aiBrain.Nickname..'; Buffs[\'PCxBuildRate\'..iIndex].Affects.BuildRate.Mult='..(Buffs['PCxBuildRate'..iIndex].Affects.BuildRate.Mult or 'nil')..'; Time='..GetGameTimeSeconds()) end
+        if IsTableEmpty(tExistingUnits) == false then
+            for iUnit, oUnit in tExistingUnits do
+                ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifier)
+            end
+        end
+    end
+    if not(aiBrain.CheatEnabled) and not(iResourceModifier == 1 and iBuildModifier == 1) then aiBrain.CheatEnabled = true end --redundnacy - used for AI, but maybe it has an effect for players so enabling to be safe
 end
