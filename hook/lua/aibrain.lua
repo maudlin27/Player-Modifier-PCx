@@ -3,11 +3,11 @@
 --- Created by maudlin27.
 --- DateTime: 23/08/2025 07:27
 ---
-local PCxMain = import('/mods/Player-Modifier-PCx/lua/Main.lua')
+
 PCxAIBrainClass = AIBrain
 PCxBrain = Class(BaseAIBrainClass) {
     OnCreateHuman = function(self, planName)
-        ForkThread(PCxMain.OnCreateHuman, self, planName)
         PCxAIBrainClass.OnCreateHuman(self, planName)
+        import('/mods/PlayerModifierPCx/lua/Main.lua').OnCreateHuman(self, planName)
     end,
 }

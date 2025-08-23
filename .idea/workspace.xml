@@ -5,14 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4bed6428-a5bd-40a6-836e-6e7cdf0d672d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/hook/lua/aibrain.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hook/lua/defaultunits.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/hook/lua/simInit.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lua/AI/CustomAIs_v2/SpawnACU.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lua/AI/LobbyTooltips/tooltips.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lua/SpawnMain.lua" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/mod_info.lua" beforeDir="false" afterPath="$PROJECT_DIR$/mod_info.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/hook/lua/aibrain.lua" beforeDir="false" afterPath="$PROJECT_DIR$/hook/lua/aibrain.lua" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lua/lobbyoptions.lua" beforeDir="false" afterPath="$PROJECT_DIR$/lua/AI/LobbyOptions/lobbyoptions.lua" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,6 +44,11 @@
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\ProgramData\FAForever\user\My Games\Gas Powered Games\Supreme Commander Forged Alliance\mods\Player-Modifier-PCx\lua\AI\LobbyOptions" />
+    </key>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">

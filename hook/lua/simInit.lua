@@ -5,7 +5,7 @@
 ---
 --Put anything we want to only run once (not once per aiBrain) below
 local PCxBeginSession = BeginSession
-local PCxMain = import('/mods/Player-Modifier-PCx/lua/Main.lua')
+local PCxMain = import('/mods/PlayerModifierPCx/lua/Main.lua')
 function BeginSession()
     PCxBeginSession()
     PCxMain.RecordCheatModifiersByIndex()
