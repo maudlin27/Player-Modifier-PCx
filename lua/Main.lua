@@ -64,75 +64,77 @@ end
 
 function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifier)
     local sFunctionRef = 'ApplyUnitCheatModifiers'
-    local bDebugMessages = true
+    local bDebugMessages = false
 
     WaitTicks(1)
-    local oBP = oUnit:GetBlueprint()
-    if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate) end
-    if iResourceModifier then
-        local iBaseMassPerSec = (oBP.Economy.ProductionPerSecondMass or 0)
-        local iBaseEnergyPerSec = (oBP.Economy.ProductionPerSecondEnergy or 0)
-        local iUpgradeMassPerSec = 0
-        local iUpgradeEnergyPerSec = 0
+    if not(oUnit.Dead) and oUnit.UnitId and oUnit.GetAIBrain then
+        local oBP = oUnit:GetBlueprint()
+        if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate) end
+        if iResourceModifier then
+            local iBaseMassPerSec = (oBP.Economy.ProductionPerSecondMass or 0)
+            local iBaseEnergyPerSec = (oBP.Economy.ProductionPerSecondEnergy or 0)
+            local iUpgradeMassPerSec = 0
+            local iUpgradeEnergyPerSec = 0
 
-        local tPossibleUpgrades = oBP.Enhancements
-        if IsTableEmpty(tPossibleUpgrades) == false and oUnit.HasEnhancement then
-            if bDebugMessages == true then LOG(sFunctionRef..': tPossibleUpgrades size='..table.getn(tPossibleUpgrades)) end
-            if tPossibleUpgrades then
-                for sCurUpgrade, tUpgrade in tPossibleUpgrades do
-                    if oUnit:HasEnhancement(sCurUpgrade) then
-                        iUpgradeMassPerSec = iUpgradeMassPerSec + (tUpgrade.ProductionPerSecondMass or 0)
-                        iUpgradeEnergyPerSec = iUpgradeEnergyPerSec + (tUpgrade.ProductionPerSecondEnergy or 0)
-                    end
-                end
-            end
-        end
-        if iUpgradeMassPerSec > 0 or iUpgradeEnergyPerSec > 0 or iBaseMassPerSec > 0 or iBaseEnergyPerSec > 0 then
-            if not(Buffs['PCxIncome'..iIndex]) then
-                SetBuildAndResourceCheatModifiers(oUnit:GetAIBrain(), iBuildModifier, iResourceModifier, true, false)
-            end
-            --Check if have a buff
-            if bDebugMessages == true then
-                LOG(sFunctionRef..': unit.Buffs.BuffTable='..reprs(oUnit.Buffs.BuffTable)..'; Buffs[\'PCxIncome\'..iIndex].Affects.EnergyProduction.Mult='..(Buffs['PCxIncome'..iIndex].Affects.EnergyProduction.Mult or 'nil'))
-            end
-            if IsTableEmpty(oUnit.Buffs.BuffTable) == false then
-                for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
-                    for sBuffRef, tBuffValues in tBuffInfo do
-                        if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
-                        if sBuffRef == 'PCxIncome' or sBuffRef == 'PCxIncome'..iIndex then
-                            if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
-                            FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
+            local tPossibleUpgrades = oBP.Enhancements
+            if IsTableEmpty(tPossibleUpgrades) == false and oUnit.HasEnhancement then
+                if bDebugMessages == true then LOG(sFunctionRef..': tPossibleUpgrades size='..table.getn(tPossibleUpgrades)) end
+                if tPossibleUpgrades then
+                    for sCurUpgrade, tUpgrade in tPossibleUpgrades do
+                        if oUnit:HasEnhancement(sCurUpgrade) then
+                            iUpgradeMassPerSec = iUpgradeMassPerSec + (tUpgrade.ProductionPerSecondMass or 0)
+                            iUpgradeEnergyPerSec = iUpgradeEnergyPerSec + (tUpgrade.ProductionPerSecondEnergy or 0)
                         end
                     end
                 end
             end
-            FAFBuffs.ApplyBuff(oUnit, 'PCxIncome'..iIndex)
-            oUnit:SetProductionPerSecondMass((iBaseMassPerSec + iUpgradeMassPerSec) * iResourceModifier)
-            oUnit:SetProductionPerSecondEnergy((iBaseEnergyPerSec + iUpgradeEnergyPerSec) * iResourceModifier)
-            if bDebugMessages == true then LOG(sFunctionRef..': Finished setting build and resource cheat modifiers for unit '..oUnit.UnitId..' owned by player '..oUnit:GetAIBrain().Nickname..', iBaseMassPerSec='..iBaseMassPerSec..'; iUpgradeMassPerSec='..iUpgradeMassPerSec..'; iResourceModifier='..iResourceModifier..'; Brain='..oUnit:GetAIBrain().Nickname..'; Buffs[CheatIncome].Affects.MassProduction.Mult='..(Buffs['PCxIncome'..iIndex].Affects.MassProduction.Mult or 'nil')) end
-        end
-    end
-    if iBuildModifier then
-        if oBP.Economy.BuildRate then
-            if not(Buffs['PCxBuildRate'..iIndex]) then
-                SetBuildAndResourceCheatModifiers(oUnit:GetAIBrain(), iBuildModifier, iResourceModifier, true, false)
+            if iUpgradeMassPerSec > 0 or iUpgradeEnergyPerSec > 0 or iBaseMassPerSec > 0 or iBaseEnergyPerSec > 0 then
+                if not(Buffs['PCxIncome'..iIndex]) then
+                    SetBuildAndResourceCheatModifiers(oUnit:GetAIBrain(), iBuildModifier, iResourceModifier, true, false)
+                end
+                --Check if have a buff
                 if bDebugMessages == true then
-                    LOG(sFunctionRef..': unit.Buffs.BuffTable='..reprs(oUnit.Buffs.BuffTable)..'; Buffs[\'PCxBuildRate\'..iIndex].Affects.BuildRate.Mult='..(Buffs['PCxBuildRate'..iIndex].Affects.BuildRate.Mult or 'nil'))
+                    LOG(sFunctionRef..': unit.Buffs.BuffTable='..reprs(oUnit.Buffs.BuffTable)..'; Buffs[\'PCxIncome\'..iIndex].Affects.EnergyProduction.Mult='..(Buffs['PCxIncome'..iIndex].Affects.EnergyProduction.Mult or 'nil'))
                 end
-            end
-            if IsTableEmpty(oUnit.Buffs.BuffTable) == false then
-                for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
-                    for sBuffRef, tBuffValues in tBuffInfo do
-                        if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
-                        if sBuffRef == 'PCxBuildRate' or sBuffRef == 'PCxBuildRate'..iIndex then
-                            if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
-                            FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
+                if IsTableEmpty(oUnit.Buffs.BuffTable) == false then
+                    for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
+                        for sBuffRef, tBuffValues in tBuffInfo do
+                            if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
+                            if sBuffRef == 'PCxIncome' or sBuffRef == 'PCxIncome'..iIndex then
+                                if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
+                                FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
+                            end
                         end
                     end
                 end
+                FAFBuffs.ApplyBuff(oUnit, 'PCxIncome'..iIndex)
+                oUnit:SetProductionPerSecondMass((iBaseMassPerSec + iUpgradeMassPerSec) * iResourceModifier)
+                oUnit:SetProductionPerSecondEnergy((iBaseEnergyPerSec + iUpgradeEnergyPerSec) * iResourceModifier)
+                if bDebugMessages == true then LOG(sFunctionRef..': Finished setting build and resource cheat modifiers for unit '..oUnit.UnitId..' owned by player '..oUnit:GetAIBrain().Nickname..', iBaseMassPerSec='..iBaseMassPerSec..'; iUpgradeMassPerSec='..iUpgradeMassPerSec..'; iResourceModifier='..iResourceModifier..'; Brain='..oUnit:GetAIBrain().Nickname..'; Buffs[CheatIncome].Affects.MassProduction.Mult='..(Buffs['PCxIncome'..iIndex].Affects.MassProduction.Mult or 'nil')) end
             end
-            FAFBuffs.ApplyBuff(oUnit, 'PCxBuildRate'..iIndex)
-            if bDebugMessages == true then LOG(sFunctionRef..': Applied build rate buff of '..(Buffs['BuildRate'..iIndex].Affects.BuildRate.Mult or 'nil')..' to the unit') end
+        end
+        if iBuildModifier then
+            if oBP.Economy.BuildRate then
+                if not(Buffs['PCxBuildRate'..iIndex]) then
+                    SetBuildAndResourceCheatModifiers(oUnit:GetAIBrain(), iBuildModifier, iResourceModifier, true, false)
+                    if bDebugMessages == true then
+                        LOG(sFunctionRef..': unit.Buffs.BuffTable='..reprs(oUnit.Buffs.BuffTable)..'; Buffs[\'PCxBuildRate\'..iIndex].Affects.BuildRate.Mult='..(Buffs['PCxBuildRate'..iIndex].Affects.BuildRate.Mult or 'nil'))
+                    end
+                end
+                if IsTableEmpty(oUnit.Buffs.BuffTable) == false then
+                    for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
+                        for sBuffRef, tBuffValues in tBuffInfo do
+                            if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
+                            if sBuffRef == 'PCxBuildRate' or sBuffRef == 'PCxBuildRate'..iIndex then
+                                if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
+                                FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
+                            end
+                        end
+                    end
+                end
+                FAFBuffs.ApplyBuff(oUnit, 'PCxBuildRate'..iIndex)
+                if bDebugMessages == true then LOG(sFunctionRef..': Applied build rate buff of '..(Buffs['BuildRate'..iIndex].Affects.BuildRate.Mult or 'nil')..' to the unit') end
+            end
         end
     end
 end
@@ -222,7 +224,7 @@ end--]]
 
 function RecordCheatModifiersByIndex()
     local sFunctionRef = 'RecordCheatModifiersByIndex'
-    local bDebugMessages = true
+    local bDebugMessages = false
 
     local sBaseResource = 'PCxCheatMult'
     local sBaseBuild = 'PCxBuildMult'

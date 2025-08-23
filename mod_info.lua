@@ -1,5 +1,5 @@
 name = "Player Modifier PCx"
-uid = "fplayx27-v003-55b4-92b6-64398e7ge43f"
+uid = "fplayx27-v001-55b4-92b6-64398e7ge43f"
 version = 1
 copyright = "MIT License"
 description = "Specify AIx type modifiers for human players"
