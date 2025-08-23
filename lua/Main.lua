@@ -213,3 +213,29 @@ function SetBuildAndResourceCheatModifiers(aiBrain, iBuildModifier, iResourceMod
     end
     if not(aiBrain.CheatEnabled) and not(iResourceModifier == 1 and iBuildModifier == 1) then aiBrain.CheatEnabled = true end --redundnacy - used for AI, but maybe it has an effect for players so enabling to be safe
 end
+
+function OnCreateHuman(aiBrain, planName)
+    local iIndex = aiBrain:GetArmyIndex()
+    if tbModifierByIndex[iIndex] then
+        SetBuildAndResourceCheatModifiers(aiBrain, tiBuildRateModByIndex[iIndex], tiResourceModByIndex[iIndex], false, false)
+    end
+end
+
+function RecordCheatModifiersByIndex()
+    local sBaseResource = 'PCxCheatMult'
+    local sBaseBuild = 'PCxBuildMult'
+    local iCurResource, iCurBuild
+    for iCurPlayerIndex = 1, 16 do
+        iCurResource = ScenarioInfo.Options[sBaseResource..iCurPlayerIndex]
+        iCurBuild = ScenarioInfo.Options[sBaseBuild..iCurPlayerIndex]
+        if not(iCurResource) then iCurResource = 1 else iCurResource = tonumber(iCurResource) end
+        if not(iCurBuild) then iCurBuild = 1 else iCurBuild = tonumber(iCurBuild) end
+        if iCurResource == 1 and iCurBuild == 1 then
+            --Do nothing - default
+        else
+            tbModifierByIndex[iCurPlayerIndex] = true
+            tiBuildRateModByIndex[iCurPlayerIndex] = iCurBuild
+            tiResourceModByIndex[iCurPlayerIndex] = iCurResource
+        end
+    end
+end
