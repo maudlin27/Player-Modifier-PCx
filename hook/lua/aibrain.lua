@@ -4,10 +4,10 @@
 --- DateTime: 23/08/2025 07:27
 ---
 
-PCxAIBrainClass = AIBrain
+--[[PCxAIBrainClass = AIBrain
 PCxBrain = Class(BaseAIBrainClass) {
     OnCreateHuman = function(self, planName)
         PCxAIBrainClass.OnCreateHuman(self, planName)
         import('/mods/PlayerModifierPCx/lua/Main.lua').OnCreateHuman(self, planName)
     end,
-}
+}--]]

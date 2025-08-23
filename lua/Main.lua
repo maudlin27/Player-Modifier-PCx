@@ -38,7 +38,6 @@ end
 
 
 function OnCreate(oUnit)
-    --LOG('OnCreate pre M28InGamecheck, M28Utilities.bM28AIInGame='..tostring(M28Utilities.bM28AIInGame))
     if bModifiersPresent then
         --Is this a valid unit?
         if oUnit.UnitId and not(oUnit.Dead) and oUnit.GetAIBrain then
@@ -64,8 +63,8 @@ function OnCreate(oUnit)
 end
 
 function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifier)
-    local bDebugMessages = false
-    local sFunctionRef = 'FixUnitResourceCheatModifiers'
+    local sFunctionRef = 'ApplyUnitCheatModifiers'
+    local bDebugMessages = true
 
     WaitTicks(1)
     local oBP = oUnit:GetBlueprint()
@@ -139,7 +138,7 @@ function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifie
 end
 
 function SetBuildAndResourceCheatModifiers(aiBrain, iBuildModifier, iResourceModifier, bDontApplyToUnits, bUpdateCheatValue)
-    local bDebugMessages = false if M28Profiler.bGlobalDebugOverride == true then   bDebugMessages = true end
+    local bDebugMessages = false
     local sFunctionRef = 'SetBuildAndResourceCheatModifiers'
     --Note - see also ApplyUnitCheatModifiers for the function applying the buffs to units
 
@@ -214,14 +213,17 @@ function SetBuildAndResourceCheatModifiers(aiBrain, iBuildModifier, iResourceMod
     if not(aiBrain.CheatEnabled) and not(iResourceModifier == 1 and iBuildModifier == 1) then aiBrain.CheatEnabled = true end --redundnacy - used for AI, but maybe it has an effect for players so enabling to be safe
 end
 
-function OnCreateHuman(aiBrain, planName)
+--[[function OnCreateHuman(aiBrain, planName)
     local iIndex = aiBrain:GetArmyIndex()
     if tbModifierByIndex[iIndex] then
         SetBuildAndResourceCheatModifiers(aiBrain, tiBuildRateModByIndex[iIndex], tiResourceModByIndex[iIndex], false, false)
     end
-end
+end--]]
 
 function RecordCheatModifiersByIndex()
+    local sFunctionRef = 'RecordCheatModifiersByIndex'
+    local bDebugMessages = true
+
     local sBaseResource = 'PCxCheatMult'
     local sBaseBuild = 'PCxBuildMult'
     local iCurResource, iCurBuild
@@ -236,6 +238,8 @@ function RecordCheatModifiersByIndex()
             tbModifierByIndex[iCurPlayerIndex] = true
             tiBuildRateModByIndex[iCurPlayerIndex] = iCurBuild
             tiResourceModByIndex[iCurPlayerIndex] = iCurResource
+            bModifiersPresent = true
         end
+        if bDebugMessages == true then LOG(sFunctionRef..': Considering resource and build mod for iCurPlayerIndex='..iCurPlayerIndex..'; iCurResource='..iCurResource..'; iCurBuild='..iCurBuild..'; bModifiersPresent='..tostring(bModifiersPresent)) end
     end
 end
