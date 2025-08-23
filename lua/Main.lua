@@ -68,7 +68,7 @@ function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifie
 
     WaitTicks(1)
     local oBP = oUnit:GetBlueprint()
-    if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..GetUnitLifetimeCount(oUnit)..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate) end
+    if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate) end
     if iResourceModifier then
         local iBaseMassPerSec = (oBP.Economy.ProductionPerSecondMass or 0)
         local iBaseEnergyPerSec = (oBP.Economy.ProductionPerSecondEnergy or 0)
