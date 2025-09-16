@@ -69,7 +69,7 @@ function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifie
     WaitTicks(1)
     if not(oUnit.Dead) and oUnit.UnitId and oUnit.GetAIBrain then
         local oBP = oUnit:GetBlueprint()
-        if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate) end
+        if bDebugMessages == true then LOG(sFunctionRef..': Considering applying resource modifier to unit '..oUnit.UnitId..' owned by '..oUnit:GetAIBrain().Nickname..', iResourceModifier='..iResourceModifier..'; iBuildModifier='..iBuildModifier..'; oBP.Economy.BuildRate='..oBP.Economy.BuildRate..'; Unit EntityId='..(oUnit.EntityId or 'nil')) end
         if iResourceModifier then
             local iBaseMassPerSec = (oBP.Economy.ProductionPerSecondMass or 0)
             local iBaseEnergyPerSec = (oBP.Economy.ProductionPerSecondEnergy or 0)
@@ -100,7 +100,7 @@ function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifie
                     for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
                         for sBuffRef, tBuffValues in tBuffInfo do
                             if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
-                            if sBuffRef == 'PCxIncome' or sBuffRef == 'PCxIncome'..iIndex then
+                            if sBuffRef == 'PCxIncome' or sBuffRef == 'PCxIncome'..iIndex or sBuffRef == 'CheatIncome' then
                                 if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
                                 FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
                             end
@@ -125,7 +125,7 @@ function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifie
                     for sBuffType, tBuffInfo in oUnit.Buffs.BuffTable do
                         for sBuffRef, tBuffValues in tBuffInfo do
                             if bDebugMessages == true then LOG(sFunctionRef..': Considering sBuffType='..sBuffType..'; sBuffRef='..sBuffRef..'; tBuffValues='..repru(tBuffValues)) end
-                            if sBuffRef == 'PCxBuildRate' or sBuffRef == 'PCxBuildRate'..iIndex then
+                            if sBuffRef == 'PCxBuildRate' or sBuffRef == 'PCxBuildRate'..iIndex or sBuffRef == 'CheatBuildRate' then
                                 if bDebugMessages == true then LOG(sFunctionRef..': Revoving buff '..sBuffRef) end
                                 FAFBuffs.RemoveBuff(oUnit, sBuffRef, true)
                             end
@@ -133,7 +133,7 @@ function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifie
                     end
                 end
                 FAFBuffs.ApplyBuff(oUnit, 'PCxBuildRate'..iIndex)
-                if bDebugMessages == true then LOG(sFunctionRef..': Applied build rate buff of '..(Buffs['BuildRate'..iIndex].Affects.BuildRate.Mult or 'nil')..' to the unit') end
+                if bDebugMessages == true then LOG(sFunctionRef..': Applied build rate buff of '..(Buffs['PCxBuildRate'..iIndex].Affects.BuildRate.Mult or 'nil')..' to the unit, EntityID='..(oUnit.EntityId or 'nil')..';  oUnit.Buffs.BuffTable='..repru( oUnit.Buffs.BuffTable)) end
             end
         end
     end
