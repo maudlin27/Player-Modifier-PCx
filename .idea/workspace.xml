@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4bed6428-a5bd-40a6-836e-6e7cdf0d672d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lua/Main.lua" beforeDir="false" afterPath="$PROJECT_DIR$/lua/Main.lua" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
