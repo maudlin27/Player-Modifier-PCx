@@ -6,7 +6,7 @@
 AIOpts =
 {
     {
-        default = 6,
+        default = 10,
         label = "PCx 1 Resource Multiplier",
         help = "Set the resource multiplier for player 1",
         key = 'PCxCheatMult1',
@@ -23,7 +23,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 1 Build Multiplier",
         help = "Set the build rate multiplier for player 1",
         key = 'PCxBuildMult1',
@@ -40,7 +40,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 2 Resource Multiplier",
         help = "Set the resource multiplier for player 2",
         key = 'PCxCheatMult2',
@@ -57,7 +57,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 2 Build Multiplier",
         help = "Set the build rate multiplier for player 2",
         key = 'PCxBuildMult2',
@@ -74,7 +74,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 3 Resource Multiplier",
         help = "Set the resource multiplier for player 3",
         key = 'PCxCheatMult3',
@@ -91,7 +91,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 3 Build Multiplier",
         help = "Set the build rate multiplier for player 3",
         key = 'PCxBuildMult3',
@@ -108,7 +108,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 4 Resource Multiplier",
         help = "Set the resource multiplier for player 4",
         key = 'PCxCheatMult4',
@@ -125,7 +125,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 4 Build Multiplier",
         help = "Set the build rate multiplier for player 4",
         key = 'PCxBuildMult4',
@@ -142,7 +142,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 5 Resource Multiplier",
         help = "Set the resource multiplier for player 5",
         key = 'PCxCheatMult5',
@@ -159,7 +159,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 5 Build Multiplier",
         help = "Set the build rate multiplier for player 5",
         key = 'PCxBuildMult5',
@@ -176,7 +176,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 6 Resource Multiplier",
         help = "Set the resource multiplier for player 6",
         key = 'PCxCheatMult6',
@@ -193,7 +193,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 6 Build Multiplier",
         help = "Set the build rate multiplier for player 6",
         key = 'PCxBuildMult6',
@@ -210,7 +210,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 7 Resource Multiplier",
         help = "Set the resource multiplier for player 7",
         key = 'PCxCheatMult7',
@@ -227,7 +227,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 7 Build Multiplier",
         help = "Set the build rate multiplier for player 7",
         key = 'PCxBuildMult7',
@@ -244,7 +244,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 8 Resource Multiplier",
         help = "Set the resource multiplier for player 8",
         key = 'PCxCheatMult8',
@@ -261,7 +261,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 8 Build Multiplier",
         help = "Set the build rate multiplier for player 8",
         key = 'PCxBuildMult8',
@@ -278,7 +278,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 9 Resource Multiplier",
         help = "Set the resource multiplier for player 9",
         key = 'PCxCheatMult9',
@@ -295,7 +295,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 9 Build Multiplier",
         help = "Set the build rate multiplier for player 9",
         key = 'PCxBuildMult9',
@@ -312,7 +312,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 10 Resource Multiplier",
         help = "Set the resource multiplier for player 10",
         key = 'PCxCheatMult10',
@@ -329,7 +329,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 10 Build Multiplier",
         help = "Set the build rate multiplier for player 10",
         key = 'PCxBuildMult10',
@@ -346,7 +346,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 11 Resource Multiplier",
         help = "Set the resource multiplier for player 11",
         key = 'PCxCheatMult11',
@@ -363,7 +363,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 11 Build Multiplier",
         help = "Set the build rate multiplier for player 11",
         key = 'PCxBuildMult11',
@@ -380,7 +380,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 12 Resource Multiplier",
         help = "Set the resource multiplier for player 12",
         key = 'PCxCheatMult12',
@@ -397,7 +397,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 12 Build Multiplier",
         help = "Set the build rate multiplier for player 12",
         key = 'PCxBuildMult12',
@@ -414,7 +414,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 13 Resource Multiplier",
         help = "Set the resource multiplier for player 13",
         key = 'PCxCheatMult13',
@@ -431,7 +431,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 13 Build Multiplier",
         help = "Set the build rate multiplier for player 13",
         key = 'PCxBuildMult13',
@@ -448,7 +448,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 14 Resource Multiplier",
         help = "Set the resource multiplier for player 14",
         key = 'PCxCheatMult14',
@@ -465,7 +465,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 14 Build Multiplier",
         help = "Set the build rate multiplier for player 14",
         key = 'PCxBuildMult14',
@@ -482,7 +482,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 15 Resource Multiplier",
         help = "Set the resource multiplier for player 15",
         key = 'PCxCheatMult15',
@@ -499,7 +499,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 15 Build Multiplier",
         help = "Set the build rate multiplier for player 15",
         key = 'PCxBuildMult15',
@@ -516,7 +516,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 16 Resource Multiplier",
         help = "Set the resource multiplier for player 16",
         key = 'PCxCheatMult16',
@@ -533,7 +533,7 @@ AIOpts =
         },
     },
     {
-        default = 6,
+        default = 10,
         label = "PCx 16 Build Multiplier",
         help = "Set the build rate multiplier for player 16",
         key = 'PCxBuildMult16',
