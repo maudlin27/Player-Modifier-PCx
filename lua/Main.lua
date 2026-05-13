@@ -62,6 +62,27 @@ function OnCreate(oUnit)
     end
 end
 
+function OnEnhancementComplete(oUnit, sEnhancement)
+    if bModifiersPresent then
+        --Is this a valid unit?
+        if oUnit.UnitId and not(oUnit.Dead) and oUnit.GetAIBrain then
+            --Is this for a brain that has a modifier?
+            local iIndex = oUnit:GetAIBrain()
+            if iIndex.GetArmyIndex then
+                iIndex = iIndex:GetArmyIndex()
+                if tbModifierByIndex[iIndex] then
+                    --Have we already run this?
+                    --Do we have a build rate or resource modifier for this unit?
+                    local oBP = oUnit:GetBlueprint()
+                    if oBP.Economy.BuildRate or oBP.Economy.ProductionPerSecondMass or oBP.Economy.ProductionPerSecondEnergy then
+                        ApplyUnitCheatModifiers(oUnit, iIndex, tiBuildRateModByIndex[iIndex],  tiResourceModByIndex[iIndex])
+                    end
+                end
+            end
+        end
+    end
+end
+
 function ApplyUnitCheatModifiers(oUnit, iIndex, iBuildModifier, iResourceModifier)
     local sFunctionRef = 'ApplyUnitCheatModifiers'
     local bDebugMessages = false
