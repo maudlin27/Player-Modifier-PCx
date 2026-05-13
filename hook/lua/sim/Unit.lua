@@ -17,5 +17,9 @@ if PCxOldUnit then
             PCxOldUnit.OnCreate(self)
             if PCxOldUnit.OnCreate then ForkThread(PCxMain.OnCreate, self) end
         end,
+        CreateEnhancement = function(self, enh)
+            if PCxOldUnit.CreateEnhancement then ForkThread(PCxMain.OnEnhancementComplete, self, enh) end
+            return PCxOldUnit.CreateEnhancement(self, enh)
+        end,
     }
 end
